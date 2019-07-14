@@ -1,0 +1,7 @@
+logs/
+package-info.java
+.*/
+bin/
+.idea/
+production/
+/*.iml

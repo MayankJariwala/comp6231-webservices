@@ -84,6 +84,16 @@ public class ManagerClient {
                         System.out.println(response);
                         Logger.writeLogToFile("client", managerID, requestBody, response, Constants.TIME_STAMP);
                         break;
+                    case EventOperation.SWAP_EVENT:
+                        System.out.print("Enter your client ID : ");
+                        customerId = scanner.next();
+                        to = Helper.getServerNameFromID(customerId);
+                        String information = this.swapEvent(customerId);
+                        requestBody = from + "," + to + "," + EventOperation.SWAP_EVENT + "," + information;
+                        response = iEventManagerCommunication.performOperation(requestBody);
+                        System.out.println(response);
+                        Logger.writeLogToFile("client", managerID, requestBody, response, Constants.TIME_STAMP);
+                        break;
                 }
                 scanner.nextLine();
             } catch (Exception e) {
@@ -97,6 +107,24 @@ public class ManagerClient {
         System.out.println("Select operation id from below option : ");
         ManagerAndClientInfo.managerOperations
                 .forEach(managerOperation -> System.out.println(idCounter.getAndIncrement() + " " + managerOperation));
+    }
+
+    /**
+     * Swap Event Function will allow user to swap the old event with new event
+     *
+     * @return String Request Body
+     */
+    private String swapEvent(String customerID) {
+        String requestBody = customerID;
+        System.out.print("Enter NEW EVENT ID : ");
+        requestBody += "," + scanner.next();
+        System.out.print("Enter NEW EVENT Type(SEMINAR/CONFERENCE/TRADESHOW) : ");
+        requestBody += "," + scanner.next();
+        System.out.print("Enter OLD EVENT ID : ");
+        requestBody += "," + scanner.next();
+        System.out.print("Enter OLD EVENT Type(SEMINAR/CONFERENCE/TRADESHOW) : ");
+        requestBody += "," + scanner.next();
+        return requestBody;
     }
 
     /**

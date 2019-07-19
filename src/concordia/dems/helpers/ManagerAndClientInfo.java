@@ -24,5 +24,5 @@ public class ManagerAndClientInfo {
 	// Operations Manager can perform
 	public static final List<String> managerOperations = Arrays.asList(EventOperation.ADD_EVENT,
 			EventOperation.REMOVE_EVENT, EventOperation.LIST_AVAILABILITY, EventOperation.BOOK_EVENT,
-			EventOperation.GET_BOOKING_SCHEDULE, EventOperation.CANCEL_EVENT);
+			EventOperation.GET_BOOKING_SCHEDULE, EventOperation.CANCEL_EVENT,EventOperation.SWAP_EVENT);
 }

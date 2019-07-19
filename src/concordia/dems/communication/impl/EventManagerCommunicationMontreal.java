@@ -4,6 +4,7 @@ import concordia.dems.communication.IEventManagementCommunicationServer;
 import concordia.dems.helpers.Constants;
 import concordia.dems.helpers.EventOperation;
 import concordia.dems.helpers.Helper;
+import concordia.dems.helpers.Logger;
 import concordia.dems.model.enumeration.Servers;
 import concordia.dems.servers.MontrealUDPClient;
 
@@ -22,7 +23,7 @@ public class EventManagerCommunicationMontreal implements IEventManagementCommun
      */
     @Override
     public String performOperation(String userRequest) {
-        // Checking whether string is empty
+//         Checking whether string is empty
         String verifyingRequestBody = userRequest.replaceAll(",", "");
         if (verifyingRequestBody.equals("")) {
             return "The request body is empty";
@@ -31,33 +32,35 @@ public class EventManagerCommunicationMontreal implements IEventManagementCommun
 
         // If request is for event availability then simply returns all events in server
         if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.LIST_AVAILABILITY)) {
-            return getEventAvailabilityFromAllServers(userRequest);
+            return clearWhiteSpaces(getEventAvailabilityFromAllServers(userRequest));
         }
 
         // For getting booking schedule of user , also call all servers service
         if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.GET_BOOKING_SCHEDULE)) {
-            return getBookingScheduleForClients(userRequest);
+            return clearWhiteSpaces(getBookingScheduleForClients(userRequest));
         }
 
         // Swap Event Functionality[Assignment 2 Functionality]
         if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.SWAP_EVENT)) {
-            return this.swapEventForCustomer(unWrappingRequest);
+            return clearWhiteSpaces(this.swapEventForCustomer(unWrappingRequest));
         }
 
         switch (unWrappingRequest[Constants.TO_INDEX]) {
 
             case "montreal":
-                return montrealUDPClient.sendMessageToMontrealUDP(userRequest);
+                String response = montrealUDPClient.sendMessageToMontrealUDP(userRequest);
+                Logger.writeLogToFile("client", "2213232", userRequest, response, Constants.TIME_STAMP);
+                return clearWhiteSpaces(response);
             case "toronto":
                 if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.BOOK_EVENT)) {
-                    return this.sendBookEventMessageToToronto(unWrappingRequest, userRequest);
+                    return clearWhiteSpaces(this.sendBookEventMessageToToronto(unWrappingRequest, userRequest));
                 } else
-                    return montrealUDPClient.sendMessageToTorontoUDP(userRequest);
+                    return clearWhiteSpaces(montrealUDPClient.sendMessageToTorontoUDP(userRequest));
             case "ottawa":
                 if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.BOOK_EVENT)) {
-                    return this.sendBookEventMessageToOttawa(unWrappingRequest, userRequest);
+                    return clearWhiteSpaces(this.sendBookEventMessageToOttawa(unWrappingRequest, userRequest));
                 } else
-                    return montrealUDPClient.sendMessageToOttawaUDP(userRequest);
+                    return clearWhiteSpaces(montrealUDPClient.sendMessageToOttawaUDP(userRequest));
         }
         return "";
     }
@@ -211,5 +214,10 @@ public class EventManagerCommunicationMontreal implements IEventManagementCommun
             cancelResponse = montrealUDPClient.sendMessageToMontrealUDP(cancelUserRequest);
         }
         return cancelResponse;
+    }
+
+    // for resolving xml parsing error issue
+    private String clearWhiteSpaces(String responseFromUDP) {
+        return responseFromUDP.trim().replaceAll("[\\000]*", "");
     }
 }

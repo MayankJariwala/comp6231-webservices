@@ -28,33 +28,33 @@ public class EventManagerCommunicationToronto implements IEventManagementCommuni
 
         // If request is for event availability then simply returns all events in server
         if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.LIST_AVAILABILITY)) {
-            return getEventAvailabilityFromAllServers(userRequest);
+            return clearWhiteSpaces(getEventAvailabilityFromAllServers(userRequest));
         }
 
         // For getting booking schedule of user , also call all servers service
         if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.GET_BOOKING_SCHEDULE)) {
-            return getBookingScheduleForClients(userRequest);
+            return clearWhiteSpaces(getBookingScheduleForClients(userRequest));
         }
 
         // Swap Event Functionality[Assignment 2 Functionality]
         if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.SWAP_EVENT)) {
-            return this.swapEventForCustomer(unWrappingRequest);
+            return clearWhiteSpaces(this.swapEventForCustomer(unWrappingRequest));
         }
         switch (unWrappingRequest[Constants.TO_INDEX]) {
             case "montreal":
                 if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.BOOK_EVENT)) {
-                    return this.sendBookEventMessageToMontreal(unWrappingRequest, userRequest);
+                    return clearWhiteSpaces(this.sendBookEventMessageToMontreal(unWrappingRequest, userRequest));
                 } else
-                    return torontoUDPClient.sendMessageToMontrealUDP(userRequest);
+                    return clearWhiteSpaces(torontoUDPClient.sendMessageToMontrealUDP(userRequest));
 
             case "toronto":
-                return torontoUDPClient.sendMessageToTorontoUDP(userRequest);
+                return clearWhiteSpaces(torontoUDPClient.sendMessageToTorontoUDP(userRequest));
 
             case "ottawa":
                 if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.BOOK_EVENT)) {
-                    return this.sendBookEventMessageToOttawa(unWrappingRequest, userRequest);
+                    return clearWhiteSpaces(this.sendBookEventMessageToOttawa(unWrappingRequest, userRequest));
                 } else
-                    return torontoUDPClient.sendMessageToOttawaUDP(userRequest);
+                    return clearWhiteSpaces(torontoUDPClient.sendMessageToOttawaUDP(userRequest));
         }
         return "";
     }
@@ -203,5 +203,10 @@ public class EventManagerCommunicationToronto implements IEventManagementCommuni
             cancelResponse = torontoUDPClient.sendMessageToTorontoUDP(cancelUserRequest);
         }
         return cancelResponse;
+    }
+
+    // for resolving xml parsing error issue
+    private String clearWhiteSpaces(String responseFromUDP) {
+        return responseFromUDP.trim().replaceAll("[\\000]*", "");
     }
 }

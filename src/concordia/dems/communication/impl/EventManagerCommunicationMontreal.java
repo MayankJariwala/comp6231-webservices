@@ -49,7 +49,6 @@ public class EventManagerCommunicationMontreal implements IEventManagementCommun
 
             case "montreal":
                 String response = montrealUDPClient.sendMessageToMontrealUDP(userRequest);
-                Logger.writeLogToFile("client", "2213232", userRequest, response, Constants.TIME_STAMP);
                 return clearWhiteSpaces(response);
             case "toronto":
                 if (unWrappingRequest[Constants.ACTION_INDEX].equals(EventOperation.BOOK_EVENT)) {
